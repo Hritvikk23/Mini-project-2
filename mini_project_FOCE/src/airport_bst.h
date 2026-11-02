@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <queue>
 
 using namespace std;
 
@@ -105,6 +106,41 @@ public:
             cur = cur->right;
         }
         return &cur->data;
+    }
+
+    bool remove(const string &code){
+        Node *parent = nullptr;
+        Node *cur = root;
+
+        while(cur !=nullptr && cur->data.iata !=code){
+            parent = cur;
+            if(code <cur->data.iata) cur = cur->left;
+            else cur = cur->right;
+        }
+        if (cur==nullptr) return false;
+        if (cur->left !=nullptr && cur->right != nullptr){
+            Node *parent_succ = cur;
+            Node *succ = cur->right;
+            while(succ->left != nullptr){
+                parent_succ = succ;
+                succ = succ->left;
+            }
+            cur->data = succ->data;
+            parent = parent_succ;
+            cur = succ;
+        }
+        Node *child;
+        if(cur->left != nullptr) child = cur->left;
+        else child = cur->right;
+
+        if (parent == nullptr) root = child;
+        else if(parent->left==cur) parent->left = child;
+        else parent->right = child;
+
+        delete cur;
+        count--;
+        return true;
+
     }
 private:
     struct Node{
