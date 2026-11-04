@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <queue>
+#include <stack>
 
 using namespace std;
 
@@ -141,6 +142,60 @@ public:
         count--;
         return true;
 
+    }
+    string rootcode() const{
+        if(root==nullptr) return "";
+        return root->data.iata;
+    }
+    string children(bool left, bool right) const{
+        if (root==nullptr) return "";
+        queue<Node*> q;
+        q.push(root);
+        while(!q.empty()){
+            Node *curr = q.front();
+            q.pop();
+            bool check_left = curr->left !=nullptr;
+            bool check_right = curr->right !=nullptr;
+            if (curr!=root && check_left==left && check_right==right) return curr->data.iata;
+            if (check_left) q.push(curr->left);
+            if (check_right) q.push(curr->right);
+        }
+        return "";
+    }
+    void printlevels() const{
+        if (root==nullptr) return ;
+        queue<Node*> q;
+        q.push(root);
+        int depth =0;
+        while(!q.empty() && depth<3){
+            int n=q.size();
+            cout<< "Level: "<<depth<<endl;
+            for(int i=0;i<n;i++){
+                Node *curr=q.front();
+                q.pop();
+                cout<<curr->data.iata<<" ";
+                if (curr->left!=nullptr) q.push(curr->left);
+                if (curr->right!=nullptr) q.push(curr->right);
+            }
+            cout<<endl;
+
+            depth++;
+        }
+    }
+
+    void inorder(vector<const Airport*> &out) const{
+        stack<Node*> st;
+        Node *curr = root;
+        while(curr!=nullptr ||!st.empty()){
+            while(curr!=nullptr){
+                st.push(curr);
+                curr = curr->left;
+            }
+            curr = st.top();
+            st.pop();
+            out.push_back(&curr->data);
+            curr=curr->right;
+        }
     }
 private:
     struct Node{

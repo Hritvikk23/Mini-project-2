@@ -22,6 +22,16 @@ void findcode(const AirportBST &tree, const string &code){
         cout << "Comparisions: "<<comp<<endl;
     }
 }
+
+void remove_cases(AirportBST &tree, const string &code){
+    cout<<"Before: "<<endl;
+    tree.printlevels();
+    if (tree.remove(code)) cout<<"Deleted "<<code<<endl;
+    else cout <<code<<" not found"<<endl;
+    cout << "After "<<endl;
+    tree.printlevels();
+    cout<<endl;
+}
 int main()
 {
     string fileName = "../data/raw/airports.dat";
@@ -123,9 +133,30 @@ int main()
     else{
         cout<<code<<"Not found"<<endl;
     }
+  
+    cout << "//====================================================="<<endl;
+    remove_cases(tree,tree.children(false,false)); //D1 leaf
+    remove_cases(tree,tree.children(true,false)); //D2 only left child
+    remove_cases(tree,tree.children(false,true)); //D2 only right child
+    remove_cases(tree,tree.children(true,true)); //D3 two children
+    remove_cases(tree,tree.rootcode()); //root
     cout << "//====================================================="<<endl;
 
-    
+    vector<const Airport*> list;
+    tree.inorder(list);
+    int len = list.size();
+    for(int i=0;i<len;i++){
+        cout << list[i]->iata << ":"<<list[i]->name<<":"<< list[i]->city<<":"<<list[i]->country<<endl;
+    }
+    bool sorted= true;
+    for(int i=0;i<len-1;i++){
+        if(list[i]->iata>list[i+1]->iata){
+            sorted = false;
+        }
+    }
+    if(sorted) cout <<"sorted"<<endl;
+    else cout <<"Not sorted"<<endl;;
+    cout << "//====================================================="<<endl;
     return 0;
 
 }
